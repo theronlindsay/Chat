@@ -1,47 +1,173 @@
-# Svelte + TS + Vite
+# 🤖 Ollama Chat Interface with Web Search
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+A modern, responsive web interface for chatting with AI models running on [Ollama](https://ollama.ai). Built with SvelteKit and TypeScript, with integrated support for web search capabilities.
 
-## Recommended IDE Setup
+## ✨ Features
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+- **Model Selection**: Browse and switch between available Ollama models
+- **Real-time Chat**: Complete conversations with AI models
+- **Web Search Integration**: Enable AI to search the web for current information (requires ollama-web-search extension)
+- **Responsive Design**: Works seamlessly on desktop and mobile
+- **Connection Status**: Visual indicators for Ollama server connectivity
+- **Error Handling**: Graceful error messages and recovery
+- **Chat Management**: Clear conversations and scroll to latest messages
+- **Custom Server Support**: Easy configuration for remote Ollama servers
 
-## Need an official Svelte framework?
+## 🌐 Web Search Setup
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+This interface supports the [ollama-web-search](https://github.com/GaryKu0/ollama-web-search) extension for enabling web search capabilities:
 
-## Technical considerations
+1. **Install the extension** following the instructions in the repository
+2. **Toggle web search** using the 🌐 Web Search toggle in the interface
+3. **Ask questions that require current information**, like:
+   - "What's the latest news about AI?"
+   - "What's the current weather in New York?"
+   - "Find recent information about Svelte 5"
 
-**Why use this over SvelteKit?**
+When web search is enabled, messages will show a 🌐 badge indicating web-enhanced responses.
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+## 🚀 Quick Start
 
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+### Prerequisites
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+1. **Install Ollama**: Download and install from [ollama.ai](https://ollama.ai)
+2. **Node.js**: Version 16 or higher
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
+### Setup
 
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+1. **Clone or download this project**
 
-**Why include `.vscode/extensions.json`?**
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+3. **Start Ollama server**:
+   ```bash
+   ollama serve
+   ```
 
-**Why enable `allowJs` in the TS template?**
+4. **Pull an AI model** (if you haven't already):
+   ```bash
+   ollama pull llama2
+   # or try other models like:
+   # ollama pull codellama
+   # ollama pull mistral
+   # ollama pull llama2:13b
+   ```
 
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
+5. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
 
-**Why is HMR not preserving my local component state?**
+6. **Open your browser** and navigate to `http://localhost:5173`
 
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
+## 🔧 Configuration
 
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
+### Custom Ollama Server URL
 
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+To connect to a remote Ollama server or change the default URL:
+
+1. Open `src/lib/ollama.ts`
+2. Modify the `OLLAMA_BASE_URL` constant:
+
+```typescript
+// For a remote server:
+export const OLLAMA_BASE_URL = 'http://your-server.com:11434';
+
+// For a different port:
+export const OLLAMA_BASE_URL = 'http://localhost:8080';
+
+// For HTTPS:
+export const OLLAMA_BASE_URL = 'https://your-secure-ollama-api.com';
 ```
+
+### Web Search Configuration
+
+Web search can be configured in `src/lib/ollama.ts`:
+
+```typescript
+// Enable/disable web search globally
+export const WEB_SEARCH_ENABLED = true;
+
+// Customize the system message for web search
+export const WEB_SEARCH_SYSTEM_MESSAGE = `Your custom prompt here...`;
+```
+
+## 📋 Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run check` - Run TypeScript and Svelte checks
+
+## 🏗️ Project Structure
+
+```
+src/
+├── lib/
+│   ├── ollama.ts          # Ollama API client and types
+│   ├── stores.ts          # Svelte stores for state management
+│   ├── ModelSelector.svelte # Model selection component
+│   ├── ChatArea.svelte    # Chat messages display
+│   ├── ChatInput.svelte   # Message input component
+│   ├── MessageBubble.svelte # Individual message component
+│   └── WebSearchToggle.svelte # Web search toggle control
+├── app.css               # Global styles
+├── App.svelte           # Main application component
+└── main.ts              # Application entry point
+```
+
+## 🤝 Usage Tips
+
+### Model Management
+- The interface automatically detects available models from your Ollama installation
+- Use the refresh button (🔄) to reload the model list
+- Model size is displayed to help you choose based on your system resources
+
+### Chat Features
+- Press `Enter` to send a message
+- Press `Shift+Enter` for a new line
+- Use the "Clear" button to start a fresh conversation
+- The interface auto-scrolls to new messages
+
+### Web Search Features
+- Toggle the 🌐 Web Search switch to enable/disable web capabilities
+- When enabled, messages with web search results show a 🌐 badge
+- The input area shows "🌐 Web search enabled" when active
+- Web search works best with questions requiring current information
+
+### Troubleshooting
+- **"Cannot connect to Ollama server"**: Ensure Ollama is running (`ollama serve`)
+- **"No models available"**: Pull at least one model (`ollama pull llama2`)
+- **"Web search unavailable"**: Install the ollama-web-search extension
+- **Slow responses**: Consider using smaller models on less powerful hardware
+
+## 🛠️ Development
+
+This project uses:
+- **SvelteKit** with Vite for fast development and building
+- **TypeScript** for type safety
+- **CSS** with custom properties for styling
+- **Svelte stores** for reactive state management
+
+### Adding New Features
+
+The codebase is modular and well-documented. Key areas:
+
+- **API Integration**: `src/lib/ollama.ts`
+- **State Management**: `src/lib/stores.ts`
+- **UI Components**: `src/lib/*.svelte`
+- **Styling**: Component-scoped CSS with global styles in `src/app.css`
+
+## 📄 License
+
+This project is open source and available under the MIT License.
+
+## 🙏 Acknowledgments
+
+- [Ollama](https://ollama.ai) for providing an excellent local AI server
+- [ollama-web-search](https://github.com/GaryKu0/ollama-web-search) for web search capabilities
+- [SvelteKit](https://kit.svelte.dev) for the amazing development experience
+- The open-source AI community for making local AI accessible
