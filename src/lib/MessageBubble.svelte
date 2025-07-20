@@ -53,11 +53,12 @@
 
 <style>
   .message {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem; /* Increased spacing between messages */
     padding: 1rem;
     border-radius: 12px;
     max-width: 80%;
     word-wrap: break-word;
+    overflow-wrap: break-word; /* Better word wrapping */
     position: relative;
   }
 

@@ -87,6 +87,7 @@
     flex-direction: column;
     height: 100%;
     background: white;
+    overflow: hidden;
   }
 
   .chat-header {
@@ -142,7 +143,9 @@
     flex: 1;
     overflow-y: auto;
     padding: 1rem;
+    padding-bottom: 2rem; /* Extra padding at bottom to ensure last message is visible */
     scroll-behavior: smooth;
+    min-height: 0; /* Important: allows flex item to shrink below content size */
   }
 
   .empty-state {

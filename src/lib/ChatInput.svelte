@@ -131,8 +131,7 @@
     border-top: 1px solid #e9ecef;
     padding: 1rem;
     background: white;
-    position: sticky;
-    bottom: 0;
+    flex-shrink: 0; /* Prevent the input from shrinking */
   }
 
   .input-wrapper {
