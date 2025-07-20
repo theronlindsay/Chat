@@ -7,14 +7,27 @@
 
   // Check if it's a CORS/403 related error
   $: is403Error = $errorMessage.includes('403') || $errorMessage.includes('CORS') || $errorMessage.includes('Forbidden');
+  
+  // Check if it's a production connection error
+  $: isProductionError = $errorMessage.includes('ollama.theronlindsay.dev');
+  
+  // Check if it's a server unavailable error
+  $: isServerUnavailable = $errorMessage.includes('Unable to connect') || $errorMessage.includes('Failed to fetch');
+  
+  // Check if it's specifically a localhost 403 error
+  $: isLocalhost403 = $errorMessage.includes('localhost') && is403Error;
 </script>
 
 {#if $errorMessage}
-  <div class="error-banner" class:cors-error={is403Error}>
+  <div class="error-banner" class:cors-error={is403Error} class:production-error={isProductionError}>
     <div class="error-header">
       <span class="error-icon">
         {#if is403Error}
           🚫
+        {:else if isProductionError}
+          🌐
+        {:else if isServerUnavailable}
+          🔌
         {:else}
           ⚠️
         {/if}
@@ -22,6 +35,10 @@
       <span class="error-title">
         {#if is403Error}
           CORS / Access Denied Error
+        {:else if isProductionError}
+          Production Server Unavailable
+        {:else if isServerUnavailable}
+          Server Connection Failed
         {:else}
           Connection Error
         {/if}
@@ -32,7 +49,52 @@
     <div class="error-content">
       <p class="error-text">{$errorMessage}</p>
       
-      {#if is403Error}
+      {#if isProductionError || isServerUnavailable}
+        <div class="solution-box production-solution">
+          <h4>🛠️ Remote Ollama Server Issue:</h4>
+          <div class="solutions">
+            <div class="solution">
+              <strong>Server Status:</strong>
+              <p>The remote Ollama server at <code>ollama.theronlindsay.dev</code> needs to be accessible.</p>
+            </div>
+            
+            <div class="solution">
+              <strong>Required server configuration:</strong>
+              <code>export OLLAMA_ORIGINS="*"</code>
+              <code># or more restrictive:</code>
+              <code>export OLLAMA_ORIGINS="https://theronlindsay.dev"</code>
+              <code>ollama serve</code>
+            </div>
+            
+            <div class="solution">
+              <strong>Server setup checklist:</strong>
+              <p>• Ollama server is running</p>
+              <p>• HTTPS is properly configured</p>
+              <p>• CORS headers are set correctly</p>
+              <p>• Models are pulled and available</p>
+            </div>
+            
+            <div class="solution">
+              <strong>📋 See PRODUCTION-DEPLOYMENT.md for full setup instructions</strong>
+            </div>
+          </div>
+        </div>
+      {:else if isLocalhost403}
+        <div class="solution-box">
+          <h4>🔒 Local Server 403 Error:</h4>
+          <div class="solutions">
+            <div class="solution">
+              <strong>Why this happens:</strong>
+              <p>Your local Ollama server is configured to reject requests from IPs other than 127.0.0.1</p>
+            </div>
+            
+            <div class="solution">
+              <strong>This app now uses the remote server only:</strong>
+              <p>The configuration has been updated to use <code>ollama.theronlindsay.dev</code> for all requests.</p>
+            </div>
+          </div>
+        </div>
+      {:else if is403Error}
         <div class="solution-box">
           <h4>🔧 How to fix this:</h4>
           <div class="solutions">
@@ -43,24 +105,15 @@
             </div>
             
             <div class="solution">
-              <strong>2. Or start Ollama with CORS enabled:</strong>
-              <code>OLLAMA_ORIGINS="http://localhost:5173,http://localhost:3000" ollama serve</code>
+              <strong>2. For production, use specific origins:</strong>
+              <code>OLLAMA_ORIGINS="https://theronlindsay.dev" ollama serve</code>
             </div>
             
             <div class="solution">
-              <strong>3. For production, use specific origins:</strong>
-              <code>OLLAMA_ORIGINS="https://your-domain.com" ollama serve</code>
-            </div>
-            
-            <div class="solution">
-              <strong>4. Check reverse proxy configuration (nginx/apache):</strong>
+              <strong>3. Check reverse proxy configuration (nginx/apache):</strong>
               <p>Ensure your reverse proxy includes CORS headers</p>
             </div>
           </div>
-          
-          <p class="fallback-note">
-            💡 <strong>Tip:</strong> The app will automatically use your local Ollama server (localhost:11434) as a fallback if available.
-          </p>
         </div>
       {/if}
     </div>
@@ -189,6 +242,25 @@
     border-radius: 4px;
     font-size: 0.875rem;
     color: #0c5460;
+  }
+
+  .production-error {
+    border-left: 4px solid #fd7e14;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  }
+
+  .production-error .error-header {
+    background: linear-gradient(135deg, #fd7e14 0%, #e55a00 100%);
+    color: white;
+  }
+
+  .production-solution {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+  }
+
+  .production-solution h4 {
+    color: #856404;
   }
 
   @media (max-width: 768px) {

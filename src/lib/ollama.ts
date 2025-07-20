@@ -1,16 +1,49 @@
 // Ollama API configuration and utilities
-// To adapt this to a custom URL, change the OLLAMA_BASE_URL constant below
+// For deployment where Ollama runs on the same machine as the web server
 
 // Ollama server configuration
-// Change this to your custom Ollama server URL if needed
-export const OLLAMA_BASE_URL = 'https://ollama.theronlindsay.dev';
+// This assumes Ollama is running on the same server as your website
+function getOllamaConfig() {
+  // Check if we're in development (localhost) or production
+  const isLocalDev = typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === ''
+  );
+  
+  if (isLocalDev) {
+    // Development: use localhost directly
+    return {
+      primary: 'http://localhost:11434',
+      fallbacks: []
+    };
+  } else {
+    // Production: use integrated nginx proxy paths
+    const protocol = window.location.protocol; // https: or http:
+    const hostname = window.location.hostname; // theronlindsay.dev
+    
+    return {
+      primary: `${protocol}//${hostname}/api/ollama`, // nginx proxy path
+      fallbacks: [
+        `https://ollama.${hostname}`, // subdomain fallback
+        `${protocol}//${hostname}:11434` // direct port fallback (may not work due to CORS)
+      ]
+    };
+  }
+}
 
-// Fallback URLs to try if the primary server is unavailable
-export const FALLBACK_URLS = [
-  'http://localhost:11434', // Local fallback
-];
+// For manual override in production, uncomment and modify this:
+// Useful if you want to force a specific server URL
+// const MANUAL_OVERRIDE = {
+//   primary: 'https://your-custom-ollama-server.com',
+//   fallbacks: ['https://backup-server.com']
+// };
 
-// Custom URL examples:
+const config = getOllamaConfig();
+export const OLLAMA_BASE_URL = config.primary;
+export const FALLBACK_URLS = config.fallbacks;
+
+// Custom URL examples for manual configuration:
 // export const OLLAMA_BASE_URL = 'http://localhost:11434'; // Local server
 // export const OLLAMA_BASE_URL = 'http://your-ollama-server.com:11434';
 // export const OLLAMA_BASE_URL = 'https://your-ollama-api.example.com';
@@ -185,7 +218,7 @@ class OllamaAPI {
             'Content-Type': 'application/json',
           },
           mode: 'cors', // Explicitly request CORS
-          signal: AbortSignal.timeout(15000) // Increased to 15 second timeout
+          signal: AbortSignal.timeout(5000) // 5 second timeout for faster fallback
         });
         
         if (response.ok) {
@@ -206,7 +239,7 @@ class OllamaAPI {
     }
     
     // If we get here, no servers worked
-    throw new Error(`Unable to connect to any Ollama server. Tried: ${urlsToTry.join(', ')}. Check server configuration and CORS settings.`);
+    throw new Error(`Unable to connect to Ollama server at ${urlsToTry.join(', ')}. Please ensure the remote Ollama server is running and accessible from your network.`);
   }
 
   async getModels(): Promise<OllamaModel[]> {
