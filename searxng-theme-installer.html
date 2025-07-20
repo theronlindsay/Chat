@@ -1,0 +1,178 @@
+<!-- SearXNG Tron Theme Bookmarklet -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SearXNG Tron Theme Installer</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0A0A0A 0%, #050505 100%);
+            color: #E0E0E0;
+            padding: 40px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 30px;
+        }
+        h1 {
+            color: #00D2FF;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .method {
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px solid #00D2FF;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .bookmarklet {
+            background: #222;
+            border: 1px solid #00FF88;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            cursor: pointer;
+        }
+        .bookmarklet:hover {
+            background: #333;
+        }
+        button {
+            background: linear-gradient(45deg, #00D2FF, #00FF88);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
+        }
+        .instructions {
+            background: rgba(255, 136, 0, 0.1);
+            border: 1px solid #FF8800;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 SearXNG Tron Theme Installer</h1>
+        
+        <div class="method">
+            <h2>📱 Method 1: One-Click Bookmarklet</h2>
+            <p>Drag this link to your bookmarks bar, then click it while on SearXNG:</p>
+            <a href="javascript:(function(){const style=document.createElement('style');style.textContent=`:root{--tron-primary:#00D2FF;--tron-secondary:#00FF88;--tron-dark:#0A0A0A;--tron-text:#E0E0E0;--tron-border:#333;}body{background:linear-gradient(135deg,var(--tron-dark) 0%,#050505 100%)!important;color:var(--tron-text)!important;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif!important;}.navbar,nav{background:rgba(10,10,10,0.95)!important;border-bottom:1px solid var(--tron-primary)!important;backdrop-filter:blur(10px);}#search,#q{background:rgba(255,255,255,0.05)!important;border:2px solid var(--tron-primary)!important;border-radius:25px!important;color:var(--tron-text)!important;padding:12px 20px!important;transition:all 0.3s ease!important;}#search:focus,#q:focus{outline:none!important;border-color:var(--tron-secondary)!important;box-shadow:0 0 20px rgba(0,210,255,0.3)!important;}button[type=submit],.btn-primary{background:linear-gradient(45deg,var(--tron-primary),var(--tron-secondary))!important;border:none!important;border-radius:20px!important;color:white!important;padding:10px 20px!important;font-weight:600!important;transition:all 0.3s ease!important;}button[type=submit]:hover,.btn-primary:hover{transform:translateY(-2px)!important;box-shadow:0 5px 15px rgba(0,210,255,0.4)!important;}.result,.search_result{background:rgba(255,255,255,0.03)!important;border:1px solid var(--tron-border)!important;border-radius:10px!important;margin-bottom:20px!important;padding:20px!important;transition:all 0.3s ease!important;}.result:hover,.search_result:hover{border-color:var(--tron-primary)!important;box-shadow:0 5px 20px rgba(0,210,255,0.1)!important;transform:translateY(-2px)!important;}.result h3 a,.search_result h3 a{color:var(--tron-primary)!important;text-decoration:none!important;font-weight:600!important;}.result h3 a:hover,.search_result h3 a:hover{color:var(--tron-secondary)!important;text-shadow:0 0 10px rgba(0,255,136,0.5)!important;}.url{color:var(--tron-secondary)!important;font-size:0.9em!important;}.content{color:var(--tron-text)!important;line-height:1.6!important;margin-top:8px!important;}::-webkit-scrollbar{width:8px;}::-webkit-scrollbar-track{background:var(--tron-dark);}::-webkit-scrollbar-thumb{background:var(--tron-primary);border-radius:4px;}::-webkit-scrollbar-thumb:hover{background:var(--tron-secondary);}`;document.head.appendChild(style);const searchInput=document.querySelector('#q, #search');if(searchInput){searchInput.addEventListener('focus',function(){this.style.boxShadow='0 0 30px rgba(0, 210, 255, 0.5)';});searchInput.addEventListener('blur',function(){this.style.boxShadow='none';});}alert('🎉 Tron theme applied to SearXNG!');})();" 
+               style="display: inline-block; background: linear-gradient(45deg, #00D2FF, #00FF88); color: white; text-decoration: none; padding: 10px 20px; border-radius: 20px; font-weight: bold;">
+                🎯 Apply Tron Theme
+            </a>
+        </div>
+
+        <div class="method">
+            <h2>💻 Method 2: Browser Console (Copy & Paste)</h2>
+            <p>Open browser console (F12) on SearXNG and paste this:</p>
+            <div class="bookmarklet" onclick="navigator.clipboard.writeText(this.textContent)">
+const style = document.createElement('style');
+style.textContent = `
+    :root {
+        --tron-primary: #00D2FF;
+        --tron-secondary: #00FF88;
+        --tron-dark: #0A0A0A;
+        --tron-text: #E0E0E0;
+        --tron-border: #333;
+    }
+    body {
+        background: linear-gradient(135deg, var(--tron-dark) 0%, #050505 100%) !important;
+        color: var(--tron-text) !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+    #search, #q {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 2px solid var(--tron-primary) !important;
+        border-radius: 25px !important;
+        color: var(--tron-text) !important;
+        padding: 12px 20px !important;
+        transition: all 0.3s ease !important;
+    }
+    #search:focus, #q:focus {
+        outline: none !important;
+        border-color: var(--tron-secondary) !important;
+        box-shadow: 0 0 20px rgba(0, 210, 255, 0.3) !important;
+    }
+    .result, .search_result {
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid var(--tron-border) !important;
+        border-radius: 10px !important;
+        margin-bottom: 20px !important;
+        padding: 20px !important;
+        transition: all 0.3s ease !important;
+    }
+    .result:hover, .search_result:hover {
+        border-color: var(--tron-primary) !important;
+        box-shadow: 0 5px 20px rgba(0, 210, 255, 0.1) !important;
+        transform: translateY(-2px) !important;
+    }
+    .result h3 a, .search_result h3 a {
+        color: var(--tron-primary) !important;
+        text-decoration: none !important;
+        font-weight: 600 !important;
+    }
+    .result h3 a:hover, .search_result h3 a:hover {
+        color: var(--tron-secondary) !important;
+        text-shadow: 0 0 10px rgba(0, 255, 136, 0.5) !important;
+    }
+`;
+document.head.appendChild(style);
+console.log('🎉 Tron theme applied!');
+            </div>
+            <div class="instructions">
+                <strong>📋 Click the code above to copy it to clipboard!</strong>
+            </div>
+        </div>
+
+        <div class="method">
+            <h2>🔧 Method 3: Browser Extension (Persistent)</h2>
+            <p>For permanent theming, install <a href="https://www.tampermonkey.net/" target="_blank" style="color: #00FF88;">Tampermonkey</a> and use our userscript:</p>
+            <button onclick="window.open('/searxng-tron-theme.user.js', '_blank')">
+                📥 Download Userscript
+            </button>
+        </div>
+
+        <div class="method">
+            <h2>🚀 Test Your Theme</h2>
+            <p>After applying the theme, visit SearXNG and search for something to see the Tron-style interface!</p>
+            <button onclick="window.open('https://search.theronlindsay.dev', '_blank')">
+                🔍 Open SearXNG
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Copy functionality for code blocks
+        document.querySelectorAll('.bookmarklet').forEach(el => {
+            el.addEventListener('click', () => {
+                navigator.clipboard.writeText(el.textContent).then(() => {
+                    const originalBg = el.style.background;
+                    el.style.background = 'rgba(0, 255, 136, 0.2)';
+                    setTimeout(() => {
+                        el.style.background = originalBg;
+                    }, 1000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
