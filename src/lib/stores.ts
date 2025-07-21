@@ -21,7 +21,7 @@ export const isConnected = writable<boolean>(false);
 export const errorMessage = writable<string>('');
 
 // Store for web search toggle
-export const webSearchEnabled = writable<boolean>(false);
+export const webSearchEnabled = writable<boolean>(true);
 
 // Store for current server URL
 export const currentServerUrl = writable<string>('');

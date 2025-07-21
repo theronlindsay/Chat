@@ -6,6 +6,15 @@
   let messageInput = '';
   let textareaElement: HTMLTextAreaElement;
 
+  // Export function to send message programmatically
+  export function sendMessageProgrammatically(message: string) {
+    if (!message.trim() || !$selectedModel || $isSendingMessage) {
+      return;
+    }
+    messageInput = message;
+    sendMessage();
+  }
+
   async function sendMessage() {
     if (!messageInput.trim() || !$selectedModel || $isSendingMessage) {
       return;
@@ -128,26 +137,25 @@
 
 <style>
   .chat-input-container {
-    border-top: 1px solid #e9ecef;
-    padding: 1rem;
-    background: white;
-    flex-shrink: 0; /* Prevent the input from shrinking */
+    border-top: 1px solid var(--md-sys-color-surface-container-highest);
+    padding: 16px;
+    background: var(--md-sys-color-surface-container-low);
+    flex-shrink: 0;
   }
 
   .input-wrapper {
     display: flex;
-    gap: 0.5rem;
+    gap: 12px;
     align-items: flex-end;
-    background: #f8f9fa;
-    border: 1px solid #ced4da;
-    border-radius: 12px;
-    padding: 0.5rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    background: var(--md-sys-color-surface-container);
+    border: none;
+    border-radius: 24px;
+    padding: 8px 16px;
+    transition: box-shadow 0.2s ease;
   }
 
   .input-wrapper:focus-within {
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    box-shadow: 0 0 0 2px var(--md-sys-color-primary);
   }
 
   .message-input {
@@ -156,56 +164,62 @@
     background: transparent;
     resize: none;
     outline: none;
-    font-family: inherit;
-    font-size: 1rem;
+    font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+    font-size: 16px;
     line-height: 1.5;
-    padding: 0.5rem;
+    padding: 8px 0;
     min-height: 24px;
     max-height: 120px;
     overflow-y: auto;
+    color: var(--md-sys-color-on-surface);
   }
 
   .message-input.disabled {
-    color: #6c757d;
+    color: var(--md-sys-color-on-surface-variant);
     cursor: not-allowed;
   }
 
   .message-input::placeholder {
-    color: #adb5bd;
+    color: var(--md-sys-color-on-surface-variant);
   }
 
   .send-button {
-    background: #007bff;
+    background: var(--md-sys-color-primary);
     border: none;
-    border-radius: 8px;
-    color: white;
+    border-radius: 12px;
+    color: var(--md-sys-color-on-primary);
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 40px;
-    height: 40px;
-    transition: background-color 0.2s, transform 0.1s;
+    min-width: 44px;
+    height: 44px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
   }
 
   .send-button:hover:not(:disabled) {
-    background: #0056b3;
+    background: var(--md-sys-color-primary-container);
     transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
 
   .send-button:active:not(:disabled) {
     transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
   }
 
   .send-button:disabled {
-    background: #6c757d;
+    background: var(--md-sys-color-surface-container-high);
+    color: var(--md-sys-color-on-surface-variant);
     cursor: not-allowed;
     transform: none;
+    box-shadow: none;
   }
 
   .send-icon {
-    font-size: 1.2rem;
+    font-size: 20px;
     transform: rotate(0deg);
   }
 
@@ -222,38 +236,42 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 0.5rem;
-    font-size: 0.75rem;
-    color: #6c757d;
+    margin-top: 8px;
+    padding: 0 8px;
+    font-size: 12px;
+    color: var(--md-sys-color-on-surface-variant);
+    font-weight: 400;
   }
 
   .help-text kbd {
-    background: #e9ecef;
-    border: 1px solid #adb5bd;
-    border-radius: 3px;
-    padding: 0.1rem 0.3rem;
-    font-size: 0.7rem;
+    background: var(--md-sys-color-surface-container-high);
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    color: var(--md-sys-color-on-surface);
+    font-family: 'Roboto Mono', monospace;
   }
 
   .model-indicator {
     font-weight: 500;
-    color: #007bff;
+    color: var(--md-sys-color-primary);
   }
 
   .web-search-indicator {
-    color: #198754;
+    color: var(--md-sys-color-tertiary);
     font-weight: 500;
-    margin-left: 0.5rem;
+    margin-left: 8px;
   }
 
   @media (max-width: 768px) {
     .chat-input-container {
-      padding: 0.75rem;
+      padding: 12px;
     }
 
     .input-help {
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 4px;
       align-items: flex-start;
     }
   }

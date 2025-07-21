@@ -66,18 +66,6 @@
 <svelte:document on:click={handleClickOutside} />
 
 <div class="model-selector">
-  <div class="selector-header">
-    <label for="model-select">Select Model:</label>
-    <button 
-      class="refresh-btn" 
-      on:click={loadModels}
-      disabled={$isLoadingModels}
-      title="Refresh models"
-    >
-      🔄
-    </button>
-  </div>
-  
   <div class="dropdown-container">
     <button 
       class="dropdown-toggle" 
@@ -86,16 +74,20 @@
       class:error={!$isConnected}
       on:click={toggleDropdown}
       disabled={$isLoadingModels}
+      title="Select AI Model"
     >
-      {#if $isLoadingModels}
-        Loading models...
-      {:else if $selectedModel}
-        {$selectedModel}
-      {:else if $models.length === 0}
-        No models available
-      {:else}
-        Select a model
-      {/if}
+      <span class="model-icon">🤖</span>
+      <span class="model-text">
+        {#if $isLoadingModels}
+          Loading...
+        {:else if $selectedModel}
+          {$selectedModel.split(':')[0]}
+        {:else if $models.length === 0}
+          No models
+        {:else}
+          Select model
+        {/if}
+      </span>
       <span class="dropdown-arrow" class:open={showDropdown}>▼</span>
     </button>
     
@@ -117,108 +109,83 @@
     {/if}
   </div>
   
-  {#if $errorMessage}
-    <div class="error-message">
-      {$errorMessage}
-    </div>
-  {/if}
-  
-  <div class="connection-status">
-    <span class="status-indicator" class:connected={$isConnected} class:disconnected={!$isConnected}></span>
-    {#if $isConnected && $currentServerUrl}
-      Connected to: {$currentServerUrl}
-    {:else}
-      Disconnected - No available servers
-    {/if}
-  </div>
+  <button 
+    class="refresh-btn" 
+    on:click={loadModels}
+    disabled={$isLoadingModels}
+    title="Refresh models"
+  >
+    <span class:spinning={$isLoadingModels}>🔄</span>
+  </button>
 </div>
 
 <style>
   .model-selector {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .selector-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
-  }
-
-  .selector-header label {
-    font-weight: 600;
-    color: #495057;
-  }
-
-  .refresh-btn {
-    background: none;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    padding: 0.25rem 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-
-  .refresh-btn:hover:not(:disabled) {
-    background-color: #e9ecef;
-  }
-
-  .refresh-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    gap: 8px;
   }
 
   .dropdown-container {
     position: relative;
-    width: 100%;
   }
 
   .dropdown-toggle {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    background: white;
+    background: var(--md-sys-color-surface-container-high);
+    border: none;
+    border-radius: 12px;
+    color: var(--md-sys-color-on-surface);
+    padding: 12px 16px;
     cursor: pointer;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    font-size: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+    transition: all 0.2s ease;
+    min-width: 140px;
+    min-height: 44px;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   }
 
   .dropdown-toggle:hover:not(:disabled) {
-    border-color: #adb5bd;
+    background: var(--md-sys-color-surface-container-highest);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
   }
 
   .dropdown-toggle:focus {
     outline: none;
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    box-shadow: 0 0 0 2px var(--md-sys-color-primary);
   }
 
-  .dropdown-toggle.loading {
-    color: #6c757d;
+  .dropdown-toggle:disabled {
+    opacity: 0.38;
     cursor: not-allowed;
   }
 
-  .dropdown-toggle.connected {
-    border-color: #198754;
+  .dropdown-toggle.error {
+    background: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
   }
 
-  .dropdown-toggle.error {
-    border-color: #dc3545;
-    background-color: #f8d7da;
+  .model-icon {
+    font-size: 16px;
+  }
+
+  .model-text {
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .dropdown-arrow {
-    transition: transform 0.2s;
-    font-size: 0.8rem;
-    color: #6c757d;
+    transition: transform 0.2s ease;
+    font-size: 12px;
+    opacity: 0.6;
   }
 
   .dropdown-arrow.open {
@@ -227,83 +194,113 @@
 
   .dropdown-menu {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 8px);
     left: 0;
     right: 0;
-    background: white;
-    border: 1px solid #ced4da;
-    border-top: none;
-    border-radius: 0 0 6px 6px;
-    max-height: 200px;
+    background: var(--md-sys-color-surface-container);
+    border: none;
+    border-radius: 16px;
+    max-height: 300px;
     overflow-y: auto;
     z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+    padding: 8px;
   }
 
   .dropdown-item {
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 12px 16px;
     border: none;
-    background: white;
+    background: transparent;
+    color: var(--md-sys-color-on-surface);
     cursor: pointer;
     text-align: left;
-    transition: background-color 0.2s;
-    border-bottom: 1px solid #f8f9fa;
+    transition: all 0.2s ease;
+    border-radius: 12px;
+    margin-bottom: 4px;
+    font-family: 'Roboto', system-ui, -apple-system, sans-serif;
   }
 
   .dropdown-item:hover {
-    background-color: #f8f9fa;
+    background-color: var(--md-sys-color-surface-container-high);
   }
 
   .dropdown-item.selected {
-    background-color: #e7f3ff;
-    color: #0056b3;
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
   }
 
   .dropdown-item:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
   }
 
   .model-name {
     font-weight: 500;
-    margin-bottom: 0.25rem;
+    margin-bottom: 4px;
+    font-size: 14px;
   }
 
   .model-info {
-    font-size: 0.875rem;
-    color: #6c757d;
+    font-size: 12px;
+    color: var(--md-sys-color-on-surface-variant);
   }
 
-  .error-message {
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    background-color: #f8d7da;
-    color: #721c24;
-    border-radius: 4px;
-    font-size: 0.875rem;
+  .dropdown-item.selected .model-info {
+    color: var(--md-sys-color-on-secondary-container);
+    opacity: 0.8;
   }
 
-  .connection-status {
+  .refresh-btn {
+    background: var(--md-sys-color-surface-container-high);
+    border: none;
+    border-radius: 12px;
+    color: var(--md-sys-color-on-surface);
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: #6c757d;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    min-width: 44px;
+    min-height: 44px;
   }
 
-  .status-indicator {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #dc3545;
+  .refresh-btn:hover:not(:disabled) {
+    background: var(--md-sys-color-surface-container-highest);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
   }
 
-  .status-indicator.connected {
-    background-color: #198754;
+  .refresh-btn:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
   }
 
-  .status-indicator.disconnected {
-    background-color: #dc3545;
+  .spinning {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .dropdown-toggle {
+      min-width: 100px;
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+
+    .dropdown-menu {
+      min-width: 180px;
+    }
   }
 </style>

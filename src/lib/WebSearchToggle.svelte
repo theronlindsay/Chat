@@ -10,146 +10,107 @@
 </script>
 
 <div class="web-search-toggle">
-  <div class="toggle-container">
-    <div class="toggle-info">
-      <span class="toggle-icon">🌐</span>
-      <span class="toggle-text">Web Search</span>
-    </div>
-    
-    <button 
-      class="toggle-button" 
-      class:enabled={$webSearchEnabled}
-      disabled={!WEB_SEARCH_ENABLED}
-      on:click={handleToggle}
-      type="button"
-      aria-label="Toggle web search"
-    >
-      <span class="toggle-slider"></span>
-    </button>
-  </div>
-  
-  <div class="toggle-description">
-    {#if WEB_SEARCH_ENABLED}
-      {#if $webSearchEnabled}
-        <span class="status-enabled">✅ Web search enabled - AI can search the internet for current information</span>
-      {:else}
-        <span class="status-disabled">🔒 Web search disabled - AI will use only its training data</span>
-      {/if}
-    {:else}
-      <span class="status-unavailable">❌ Web search unavailable - install ollama-web-search extension</span>
-    {/if}
-  </div>
+  <button 
+    class="toggle-button" 
+    class:enabled={$webSearchEnabled}
+    disabled={!WEB_SEARCH_ENABLED}
+    on:click={handleToggle}
+    type="button"
+    title={WEB_SEARCH_ENABLED 
+      ? ($webSearchEnabled ? 'Web search enabled' : 'Web search disabled') 
+      : 'Web search unavailable'
+    }
+  >
+    <span class="toggle-icon">🌐</span>
+    <span class="toggle-text">Search</span>
+    <span class="toggle-indicator" class:active={$webSearchEnabled}></span>
+  </button>
 </div>
 
 <style>
   .web-search-toggle {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .toggle-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-  }
-
-  .toggle-info {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    color: #495057;
-  }
-
-  .toggle-icon {
-    font-size: 1.2rem;
-  }
-
-  .toggle-text {
-    font-size: 1rem;
   }
 
   .toggle-button {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 24px;
-    background-color: #ccc;
+    background: var(--md-sys-color-surface-container-high);
     border: none;
-    border-radius: 24px;
+    border-radius: 12px;
+    color: var(--md-sys-color-on-surface);
+    padding: 12px 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    outline: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+    transition: all 0.2s ease;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    min-height: 44px;
+  }
+
+  .toggle-button:hover:not(:disabled) {
+    background: var(--md-sys-color-surface-container-highest);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
   }
 
   .toggle-button:focus {
-    box-shadow: 0 0 0 2px #007bff40;
-  }
-
-  .toggle-button.enabled {
-    background-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px var(--md-sys-color-primary);
   }
 
   .toggle-button:disabled {
-    background-color: #6c757d;
+    opacity: 0.38;
     cursor: not-allowed;
-    opacity: 0.6;
   }
 
-  .toggle-slider {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    top: 3px;
-    background-color: white;
-    transition: transform 0.3s ease;
+  .toggle-button.enabled {
+    background: var(--md-sys-color-tertiary-container);
+    color: var(--md-sys-color-on-tertiary-container);
+  }
+
+  .toggle-button.enabled:hover:not(:disabled) {
+    background: var(--md-sys-color-tertiary-container);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+  }
+
+  .toggle-icon {
+    font-size: 16px;
+  }
+
+  .toggle-text {
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .toggle-indicator {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    display: block;
+    background-color: var(--md-sys-color-outline);
+    transition: all 0.2s ease;
   }
 
-  .toggle-button.enabled .toggle-slider {
-    transform: translateX(26px);
+  .toggle-indicator.active {
+    background-color: var(--md-sys-color-tertiary);
+    box-shadow: 0 0 8px rgba(103, 80, 164, 0.3);
   }
 
-  .toggle-button:disabled .toggle-slider {
-    background-color: #f8f9fa;
-  }
-
-  .toggle-description {
-    font-size: 0.875rem;
-    line-height: 1.4;
-  }
-
-  .status-enabled {
-    color: #198754;
-    font-weight: 500;
-  }
-
-  .status-disabled {
-    color: #6c757d;
-  }
-
-  .status-unavailable {
-    color: #dc3545;
-    font-weight: 500;
-  }
-
+  /* Mobile responsive */
   @media (max-width: 768px) {
-    .toggle-container {
-      flex-direction: column;
-      gap: 0.5rem;
-      align-items: flex-start;
+    .toggle-button {
+      font-size: 12px;
+      padding: 6px 12px;
+      gap: 6px;
     }
 
-    .toggle-button {
-      align-self: flex-end;
+    .toggle-text {
+      display: none;
     }
   }
 </style>

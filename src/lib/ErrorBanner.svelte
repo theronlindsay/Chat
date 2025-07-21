@@ -69,43 +69,45 @@
 
 <style>
   .error-banner {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    border-radius: 8px;
-    margin: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
+    border: 1px solid var(--md-sys-color-error);
+    border-radius: 12px;
+    margin: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    font-family: 'Roboto', system-ui, -apple-system, sans-serif;
   }
 
   .cors-error {
-    background: #fff3cd;
-    color: #856404;
-    border-color: #ffeaa7;
+    background: #fef7cd;
+    color: #7c2d12;
+    border-color: #f59e0b;
   }
 
   .error-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
     background: rgba(0, 0, 0, 0.05);
+    border-radius: 12px 12px 0 0;
   }
 
   .error-icon {
-    font-size: 1.2rem;
+    font-size: 20px;
   }
 
   .error-title {
     flex: 1;
-    font-weight: 600;
-    font-size: 1rem;
+    font-weight: 500;
+    font-size: 16px;
   }
 
   .dismiss-btn {
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 24px;
     cursor: pointer;
     padding: 0;
     width: 24px;
@@ -115,7 +117,8 @@
     align-items: center;
     justify-content: center;
     opacity: 0.7;
-    transition: opacity 0.2s, background-color 0.2s;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+    color: inherit;
   }
 
   .dismiss-btn:hover {
@@ -124,89 +127,102 @@
   }
 
   .error-content {
-    padding: 1rem;
+    padding: 16px;
   }
 
   .error-text {
-    margin: 0 0 1rem 0;
-    font-weight: 500;
+    margin: 0 0 16px 0;
+    font-weight: 400;
+    line-height: 1.5;
   }
 
   .solution-box {
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 6px;
-    padding: 1rem;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid var(--md-sys-color-outline-variant);
   }
 
   .solution-box h4 {
-    margin: 0 0 1rem 0;
-    color: #495057;
+    margin: 0 0 16px 0;
+    color: var(--md-sys-color-on-surface);
+    font-weight: 500;
   }
 
   .solutions {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 12px;
   }
 
   .solution {
-    background: white;
-    padding: 0.75rem;
-    border-radius: 4px;
-    border: 1px solid #e9ecef;
+    background: var(--md-sys-color-surface-container-highest);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--md-sys-color-outline-variant);
   }
 
   .solution strong {
     display: block;
-    margin-bottom: 0.5rem;
-    color: #495057;
+    margin-bottom: 8px;
+    color: var(--md-sys-color-on-surface);
+    font-weight: 500;
   }
 
   .solution code {
     display: block;
-    background: #f8f9fa;
-    padding: 0.5rem;
-    border-radius: 4px;
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    font-size: 0.875rem;
-    margin: 0.25rem 0;
-    border: 1px solid #e9ecef;
-    color: #495057;
+    background: var(--md-sys-color-surface-container-high);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'Roboto Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    margin: 4px 0;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    color: var(--md-sys-color-on-surface);
   }
 
   .solution p {
-    margin: 0.5rem 0 0 0;
-    font-size: 0.875rem;
-    color: #6c757d;
+    margin: 8px 0 0 0;
+    font-size: 14px;
+    color: var(--md-sys-color-on-surface-variant);
+    line-height: 1.4;
   }
 
   .fallback-note {
-    margin-top: 1rem;
-    padding: 0.75rem;
-    background: #d1ecf1;
-    border: 1px solid #bee5eb;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    color: #0c5460;
+    margin-top: 16px;
+    padding: 12px;
+    background: var(--md-sys-color-tertiary-container);
+    border: 1px solid var(--md-sys-color-tertiary);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--md-sys-color-on-tertiary-container);
+    line-height: 1.4;
   }
 
   @media (max-width: 768px) {
     .error-banner {
-      margin: 0.5rem;
+      margin: 8px;
+    }
+
+    .error-header {
+      padding: 12px;
+    }
+
+    .error-content {
+      padding: 12px;
     }
 
     .solution code {
-      font-size: 0.75rem;
+      font-size: 12px;
       word-break: break-all;
     }
 
     .solutions {
-      gap: 0.75rem;
+      gap: 8px;
     }
 
     .solution {
-      padding: 0.5rem;
+      padding: 8px;
     }
   }
 </style>

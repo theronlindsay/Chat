@@ -27,131 +27,130 @@
                               message.content.includes('I searched');
 </script>
 
-<div class="message" class:user={message.role === 'user'} class:assistant={message.role === 'assistant'} class:system={message.role === 'system'}>
-  <div class="message-header">
-    <span class="role-indicator">
-      {#if message.role === 'user'}
-        👤
-      {:else if message.role === 'assistant'}
-        🤖
-      {:else}
-        ⚙️
-      {/if}
-    </span>
-    <span class="role-name">
-      {message.role === 'user' ? 'You' : message.role === 'assistant' ? 'Assistant' : 'System'}
+<div class="message-container" class:user={message.role === 'user'} class:assistant={message.role === 'assistant'} class:system={message.role === 'system'}>
+  <div class="message-bubble">
+    <div class="message-content">
+      {@html formatContent(message.content)}
+    </div>
+    <div class="message-meta">
+      <span class="timestamp">{formatTime(message.timestamp)}</span>
       {#if message.role === 'assistant' && hasWebSearchIndicators}
-        <span class="web-search-badge">🌐 Web</span>
+        <span class="web-search-indicator">🌐</span>
       {/if}
-    </span>
-    <span class="timestamp">{formatTime(message.timestamp)}</span>
-  </div>
-  <div class="message-content">
-    {@html formatContent(message.content)}
+    </div>
   </div>
 </div>
 
 <style>
-  .message {
-    margin-bottom: 1.5rem; /* Increased spacing between messages */
-    padding: 1rem;
-    border-radius: 12px;
-    max-width: 80%;
-    word-wrap: break-word;
-    overflow-wrap: break-word; /* Better word wrapping */
+  .message-container {
+    display: flex;
+    margin-bottom: 12px;
+    padding: 0 16px;
+    max-width: 100%;
+  }
+
+  .message-container.user {
+    justify-content: flex-end;
+  }
+
+  .message-container.assistant {
+    justify-content: flex-start;
+  }
+
+  .message-container.system {
+    justify-content: center;
+  }
+
+  .message-bubble {
+    max-width: 75%;
+    min-width: 48px;
+    border-radius: 18px;
+    padding: 8px 12px;
     position: relative;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   }
 
-  .message.user {
-    background: #007bff;
-    color: white;
-    margin-left: auto;
-    margin-right: 0;
+  .message-container.user .message-bubble {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    border-bottom-right-radius: 4px;
   }
 
-  .message.assistant {
-    background: #f8f9fa;
-    color: #212529;
-    border: 1px solid #e9ecef;
-    margin-left: 0;
-    margin-right: auto;
+  .message-container.assistant .message-bubble {
+    background: var(--md-sys-color-surface-container);
+    color: var(--md-sys-color-on-surface);
+    border-bottom-left-radius: 4px;
   }
 
-  .message.system {
-    background: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeaa7;
-    margin-left: auto;
-    margin-right: auto;
+  .message-container.system .message-bubble {
+    background: var(--md-sys-color-surface-variant);
+    color: var(--md-sys-color-on-surface-variant);
+    border-radius: 18px;
     max-width: 60%;
     text-align: center;
     font-style: italic;
   }
 
-  .message-header {
+  .message-content {
+    line-height: 1.4;
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+
+  .message-meta {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
-    opacity: 0.8;
-  }
-
-  .role-indicator {
-    font-size: 1rem;
-  }
-
-  .role-name {
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .web-search-badge {
-    background: #198754;
-    color: white;
-    font-size: 0.7rem;
-    padding: 0.1rem 0.4rem;
-    border-radius: 12px;
-    font-weight: 500;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-top: 2px;
   }
 
   .timestamp {
-    margin-left: auto;
-    font-size: 0.75rem;
+    font-size: 12px;
+    opacity: 0.7;
+    white-space: nowrap;
   }
 
-  .message-content {
-    line-height: 1.5;
+  .message-container.user .timestamp {
+    color: rgba(255, 255, 255, 0.7);
   }
 
-  .message.user .message-content {
-    color: rgba(255, 255, 255, 0.95);
+  .message-container.assistant .timestamp {
+    color: rgba(28, 27, 31, 0.6);
+  }
+
+  .web-search-indicator {
+    font-size: 12px;
+    opacity: 0.8;
   }
 
   .message-content :global(code) {
-    background: rgba(0, 0, 0, 0.1);
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    font-size: 0.875rem;
+    background: rgba(0, 0, 0, 0.08);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-family: 'Roboto Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
   }
 
-  .message.user .message-content :global(code) {
+  .message-container.user .message-content :global(code) {
     background: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.95);
   }
 
   .message-content :global(pre) {
-    background: rgba(0, 0, 0, 0.05);
-    padding: 1rem;
-    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.04);
+    padding: 12px;
+    border-radius: 12px;
     overflow-x: auto;
-    margin: 0.5rem 0;
+    margin: 8px 0;
+    border: 1px solid rgba(0, 0, 0, 0.08);
   }
 
-  .message.user .message-content :global(pre) {
-    background: rgba(255, 255, 255, 0.1);
+  .message-container.user .message-content :global(pre) {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   .message-content :global(pre code) {
@@ -160,7 +159,7 @@
   }
 
   .message-content :global(strong) {
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .message-content :global(em) {
@@ -168,12 +167,16 @@
   }
 
   @media (max-width: 768px) {
-    .message {
-      max-width: 95%;
+    .message-bubble {
+      max-width: 85%;
     }
-
-    .message.system {
+    
+    .message-container.system .message-bubble {
       max-width: 90%;
+    }
+    
+    .message-container {
+      padding: 0 12px;
     }
   }
 </style>

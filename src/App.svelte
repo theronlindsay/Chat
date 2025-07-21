@@ -3,60 +3,84 @@
   import ChatArea from './lib/ChatArea.svelte';
   import ChatInput from './lib/ChatInput.svelte';
   import WebSearchToggle from './lib/WebSearchToggle.svelte';
+  import Settings from './lib/Settings.svelte';
   import ErrorBanner from './lib/ErrorBanner.svelte';
-  import DebugPanel from './lib/DebugPanel.svelte';
-  import { errorMessage, currentServerUrl, isConnected } from './lib/stores';
+  import { errorMessage, currentServerUrl, isConnected, selectedModel, isSendingMessage } from './lib/stores';
+  import { ollamaAPI } from './lib/ollama';
+  import type { ChatMessage } from './lib/ollama';
+
+  let chatInputComponent: ChatInput;
+  let chatAreaComponent: ChatArea;
+
+  function handleSendMessage(event: CustomEvent<{message: string}>) {
+    const { message } = event.detail;
+    chatInputComponent?.sendMessageProgrammatically(message);
+  }
+
+  async function handleGeneratePrompts(event: CustomEvent<{message: string, forceModel?: string}>) {
+    const { message, forceModel } = event.detail;
+    
+    if ($isSendingMessage) return;
+    
+    // Use the forced model (gemma3:4b) for suggestions, or fall back to selected model
+    const modelToUse = forceModel || $selectedModel;
+    
+    if (!modelToUse) return;
+    
+    try {
+      // Send request to generate prompts without adding to chat history
+      const response = await ollamaAPI.chat({
+        model: modelToUse,
+        messages: [{ role: 'user', content: message }],
+        enableWebSearch: false
+      });
+      
+      // Parse the response to extract suggestions
+      const suggestions = response.message.content
+        .split('\n')
+        .filter(line => line.trim())
+        .slice(0, 4) // Take only first 4 suggestions
+        .map(line => line.replace(/^[\d\-\*\•]\s*/, '').trim()); // Clean up formatting
+      
+      if (suggestions.length > 0) {
+        chatAreaComponent?.updateSuggestions(suggestions);
+      }
+    } catch (error) {
+      console.error('Error generating prompts:', error);
+    }
+  }
 </script>
 
 <main>
   <div class="app-header">
-    <h1>🤖 Ollama Chat Interface</h1>
-    <p class="subtitle">
-      {#if $isConnected && $currentServerUrl}
-        Connected to {$currentServerUrl} • Web search available
-      {:else}
-        Attempting to connect to Ollama servers...
-      {/if}
-    </p>
+    <div class="header-left">
+      <h1>🤖 TRON</h1>
+      <div class="connection-status">
+        {#if $isConnected && $currentServerUrl}
+          <span class="status-indicator connected"></span>
+          <span class="status-text">Connected</span>
+        {:else}
+          <span class="status-indicator connecting"></span>
+          <span class="status-text">Connecting...</span>
+        {/if}
+      </div>
+    </div>
+    
+    <div class="header-controls">
+      <ModelSelector />
+      <WebSearchToggle />
+      <Settings />
+    </div>
   </div>
 
   <div class="chat-container">
-    <div class="sidebar">
-      <ModelSelector />
-      <WebSearchToggle />
-      <DebugPanel />
-      
-      <div class="info-panel">
-        <h3>💡 Server Information</h3>
-        <div class="info-content">
-          <p><strong>Server Configuration:</strong></p>
-          <code>Primary: ollama.theronlindsay.dev</code><br>
-          <code>Fallback: localhost:11434</code>
-          
-          {#if $currentServerUrl}
-            <p><strong>Currently Connected:</strong></p>
-            <code>{$currentServerUrl}</code>
-          {/if}
-          
-          <p><strong>Web Search:</strong></p>
-          <p>Enable the toggle above to use web search capabilities with your queries.</p>
-          
-          <p><strong>Usage Tips:</strong></p>
-          <ul>
-            <li>The app automatically tries backup servers if the primary fails</li>
-            <li>Enable web search for current information</li>
-            <li>Press Enter to send, Shift+Enter for new lines</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="main-chat">
-      <ErrorBanner />
-      
-      <ChatArea />
-      <ChatInput />
-    </div>
+    <ErrorBanner />
+    <ChatArea 
+      bind:this={chatAreaComponent}
+      on:sendMessage={handleSendMessage}
+      on:generatePrompts={handleGeneratePrompts}
+    />
+    <ChatInput bind:this={chatInputComponent} />
   </div>
 </main>
 
@@ -64,8 +88,9 @@
   :global(body) {
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: #f5f5f5;
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
     height: 100vh;
     overflow: hidden;
   }
@@ -84,131 +109,123 @@
   }
 
   .app-header {
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-    color: white;
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background-color: var(--md-sys-color-surface-container);
+    border-bottom: 1px solid var(--md-sys-color-surface-container-highest);
+    height: 64px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
 
   .app-header h1 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.8rem;
+    font-size: 24px;
     font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
   }
 
-  .subtitle {
-    margin: 0;
-    opacity: 0.9;
-    font-size: 1rem;
+  .connection-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--md-sys-color-surface-container-high);
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 14px;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .status-indicator.connected {
+    background-color: #4ade80; /* green-400 */
+  }
+
+  .status-indicator.connecting {
+    background-color: #facc15; /* yellow-400 */
+    animation: pulse-yellow 1.5s infinite;
+  }
+
+  @keyframes pulse-yellow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .header-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
   .chat-container {
     flex: 1;
     display: flex;
-    overflow: hidden;
-  }
-
-  .sidebar {
-    width: 350px;
-    background: white;
-    border-right: 1px solid #e9ecef;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-  }
-
-  .main-chat {
-    flex: 1;
-    display: flex;
     flex-direction: column;
     overflow: hidden;
-  }
-
-  .info-panel {
-    padding: 1rem;
-    border-top: 1px solid #e9ecef;
-    background: #f8f9fa;
-    flex-shrink: 0;
-  }
-
-  .info-panel h3 {
-    margin: 0 0 1rem 0;
-    color: #495057;
-    font-size: 1rem;
-  }
-
-  .info-content {
-    font-size: 0.875rem;
-    line-height: 1.4;
-    color: #6c757d;
-  }
-
-  .info-content p {
-    margin: 0 0 0.75rem 0;
-  }
-
-  .info-content p:last-child {
-    margin-bottom: 0;
-  }
-
-  .info-content code {
-    background: #e9ecef;
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    font-size: 0.8rem;
-    display: inline-block;
-    margin: 0.2rem 0;
-  }
-
-  .info-content ul {
-    margin: 0.5rem 0;
-    padding-left: 1.2rem;
-  }
-
-  .info-content li {
-    margin-bottom: 0.25rem;
+    min-height: 0;
   }
 
   /* Responsive design */
   @media (max-width: 768px) {
-    .chat-container {
+    .app-header {
+      padding: 0.75rem 1rem;
       flex-direction: column;
-    }
-
-    .sidebar {
-      width: 100%;
+      gap: 1rem;
+      align-items: stretch;
       height: auto;
-      max-height: 40vh;
-      border-right: none;
-      border-bottom: 1px solid #e9ecef;
     }
 
-    .info-panel {
-      display: none; /* Hide info panel on mobile to save space */
+    .header-left {
+      justify-content: center;
+    }
+
+    .header-controls {
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
 
     .app-header h1 {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
     }
 
-    .app-header {
-      padding: 0.75rem;
+    .connection-status {
+      font-size: 0.8rem;
     }
   }
 
   @media (max-width: 480px) {
-    .sidebar {
-      max-height: 35vh;
+    .app-header {
+      padding: 0.5rem;
+    }
+
+    .header-controls {
+      gap: 0.5rem;
     }
 
     .app-header h1 {
-      font-size: 1.3rem;
-    }
-
-    .subtitle {
-      font-size: 0.9rem;
+      font-size: 1.125rem;
     }
   }
 </style>
