@@ -54,7 +54,8 @@
 <main>
   <div class="app-header">
     <div class="header-left">
-      <h1>🤖 TRON</h1>
+      <img src="/tron.svg" alt="TRON Logo" />
+      <h1>  TRON</h1>
       <div class="connection-status">
         {#if $isConnected && $currentServerUrl}
           <span class="status-indicator connected"></span>
@@ -122,6 +123,14 @@
     display: flex;
     align-items: center;
     gap: 16px;
+  }
+
+  .header-left img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    margin-right: 4px;
+    vertical-align: middle;
   }
 
   .app-header h1 {
