@@ -63,6 +63,18 @@
     </button>
   </div>
   
+  <div class="environment-info">
+    <h5>🌍 Server Configuration</h5>
+    <div class="env-details">
+      <div><strong>Hostname:</strong> {window.location.hostname}</div>
+      <div><strong>Protocol:</strong> {window.location.protocol}</div>
+      <div><strong>Environment:</strong> {window.location.hostname.includes('localhost') ? 'Development' : 'Production'}</div>
+      <div><strong>Primary Ollama URL:</strong> {OLLAMA_BASE_URL}</div>
+      <div><strong>Fallback URLs:</strong> {FALLBACK_URLS.length > 0 ? FALLBACK_URLS.join(', ') : 'None'}</div>
+      <div><strong>Deployment:</strong> Same-machine Ollama with nginx proxy</div>
+    </div>
+  </div>
+  
   {#if testResults.length > 0}
     <div class="test-results">
       {#each testResults as result}
@@ -93,6 +105,30 @@
     padding: 1rem;
     margin-bottom: 1rem;
     font-size: 0.875rem;
+  }
+
+  .environment-info {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #e7f3ff;
+    border-radius: 6px;
+    border: 1px solid #bee5eb;
+  }
+
+  .environment-info h5 {
+    margin: 0 0 0.5rem 0;
+    color: #0c5460;
+  }
+
+  .env-details {
+    display: grid;
+    gap: 0.25rem;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.8rem;
+  }
+
+  .env-details div {
+    color: #495057;
   }
 
   .debug-header {
