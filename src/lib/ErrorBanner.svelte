@@ -252,25 +252,6 @@
     line-height: 1.4;
   }
 
-  .production-error {
-    border-left: 4px solid #fd7e14;
-    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-  }
-
-  .production-error .error-header {
-    background: linear-gradient(135deg, #fd7e14 0%, #e55a00 100%);
-    color: white;
-  }
-
-  .production-solution {
-    background: #fff3cd;
-    border: 1px solid #ffeaa7;
-  }
-
-  .production-solution h4 {
-    color: #856404;
-  }
-
   @media (max-width: 768px) {
     .error-banner {
       margin: 8px;

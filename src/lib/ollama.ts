@@ -18,15 +18,11 @@ function getOllamaConfig() {
       fallbacks: []
     };
   } else {
-    // Production: use integrated nginx proxy paths
-    const protocol = window.location.protocol; // https: or http:
-    const hostname = window.location.hostname; // theronlindsay.dev
-    
+    // Production: use dedicated Ollama server URL
     return {
-      primary: `${protocol}//${hostname}/api/ollama`, // nginx proxy path
+      primary: 'https://ollama.theronlindsay.dev',
       fallbacks: [
-        `https://ollama.${hostname}`, // subdomain fallback
-        `${protocol}//${hostname}:11434` // direct port fallback (may not work due to CORS)
+        'http://localhost:11434' // Keep localhost as a fallback for local testing
       ]
     };
   }
